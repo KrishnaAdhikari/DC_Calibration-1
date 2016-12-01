@@ -23,6 +23,8 @@ public class RunReconstructionCoat3 implements ActionListener {
     private static String fileChosen = null; //kp: 11/30/16 
     private static String filePathOnly = null; //kp: 12/01/16
     private static String fileChosenFullPath = null; //kp: 11/30/16 
+    
+    private static String OS = System.getProperty("os.name").toLowerCase();
 
     public RunReconstructionCoat3() {
         System.out.println("Now running the reconstruction");;
@@ -41,7 +43,7 @@ public class RunReconstructionCoat3 implements ActionListener {
             java.io.File file = fileChooser.getSelectedFile();
             java.io.File fileD = fileChooser.getCurrentDirectory();
             fileChosen = file.getName();
-            filePathOnly = file.getName();
+            filePathOnly = fileD.getName();
             fileChosenFullPath = fileD.getAbsolutePath();
             System.out.println("File selected: " + fileChosen);
         } else {
@@ -58,10 +60,21 @@ public class RunReconstructionCoat3 implements ActionListener {
         String fName = fileChosen;//"theDecodedFileR128T0corSec1_allEv.0";
         String oDir = fDir; //"C:\\Users\\KPAdhikari\\Desktop\\BigFls\\CLAS12";
         
-        //Replace following two lines with an if-else code that checks which machine it is
-        inputFile = String.format("%s\\%s", fDir, fName); //For windows
-        inputFile = String.format("%s/%s", fDir, fName);  //For linux
-
+        if (isWindows()) {
+            //System.out.println("This system is Windows ...");
+            inputFile = String.format("%s\\%s", fDir, fName);
+        } else if (isMac()) {
+            //System.out.println("This system is MacOS ...");
+            inputFile = String.format("%s/%s", fDir, fName);
+        } else if (isUnix()) {
+            //System.out.println("This system is Unix/Linux ...");
+            inputFile = String.format("%s/%s", fDir, fName);
+        } else {
+            System.out.println("This system is neither Windows, nor MacOS, nor Unix/Linux ...");
+            System.out.println("Modify code accordingly. Program exiting for now.");
+            System.exit(0);
+        }
+        
                
         String COATJAVA = System.getenv("CLAS12DIR");
         System.out.println("JAVA_HOME = " + System.getenv("JAVA_HOME"));
@@ -99,5 +112,17 @@ public class RunReconstructionCoat3 implements ActionListener {
 
         System.out.println("Finished running reconstruction for this iteration ...");
 
+    }
+    
+    private static boolean isWindows() {
+        return (OS.indexOf("win") >= 0);
+    }
+
+    private static boolean isMac() {
+        return (OS.indexOf("mac") >= 0);
+    }
+
+    private static boolean isUnix() {
+        return (OS.indexOf("nux") >= 0);
     }
 }
